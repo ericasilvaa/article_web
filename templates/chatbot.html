@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        #chatbox {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+        }
+        #input-area {
+            display: flex;
+            gap: 10px;
+        }
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #send-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #send-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbox">
+        <div id="messages"></div>
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Digite sua resposta...">
+            <button id="send-btn">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        console.log("Página carregada!"); // Verifique no console do navegador se isso é exibido.
+    
+        let etapaAtual = 'inicio'; // Etapa inicial
+    
+        function atualizarChat(tipo, mensagem) {
+            const messages = document.getElementById('messages');
+            messages.innerHTML += `<p><strong>${tipo}:</strong> ${mensagem}</p>`;
+            messages.scrollTop = messages.scrollHeight; // Rolagem automática
+        }
+    
+        // Quando a página é carregada, envie a primeira pergunta
+        window.onload = function() {
+            atualizarChat('Bot', "Olá! Bem-vindo ao sistema de artigos. Como posso te ajudar hoje?");
+            atualizarChat('Bot', "1: Buscar Artigos\n2: Criar Artigo\n3: Listar Artigos\n4: Dúvidas sobre o Sistema\n5: Sair");
+        };
+    
+        document.getElementById('send-btn').onclick = function () {
+            const userInput = document.getElementById('user-input').value;
+            if (!userInput) return;
+    
+            atualizarChat('Você', userInput);
+            document.getElementById('user-input').value = '';
+    
+            fetch('/chatbot/api/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ etapa_atual: etapaAtual, resposta: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Resposta recebida:", data); // Verifique se a resposta está sendo recebida corretamente.
+                atualizarChat('Bot', data.pergunta);
+                etapaAtual = data.etapa;
+                if (data.opcoes) {
+                    for (const [key, value] of Object.entries(data.opcoes)) {
+                        atualizarChat('Bot', `${key}: ${value}`);
+                    }
+                }
+            })
+            .catch(() => atualizarChat('Erro', 'Não foi possível obter resposta.'));
+        };
+    </script>
+</body>
+</html>

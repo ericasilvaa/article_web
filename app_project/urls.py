@@ -1,10 +1,15 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views  # Importando as views de autenticação
+from django.contrib.auth import views as auth_views  
 from .views import ArticleListCreateView, ArticleDetailView
+from django.contrib import admin
+from . import views
+from django.urls import path, include
+from chatbot import views as chatbot_views
+ 
 
 urlpatterns = [
     path('articles/', ArticleListCreateView.as_view(), name='article-list-create'),
     path('articles/<int:pk>/', ArticleDetailView.as_view(), name='article-detail'),
-    #path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),  # Adicionando URL de login
-    #path('logout/', auth_views.LogoutView.as_view(), name='logout'),  # Adicionando URL de logout
+    path('chatbot/', chatbot_views.chatbot_view, name='chatbot_view'), 
+   #path('chatbot/', views.chatbot_view, name='chatbot_view'),  # URL para a view do chatbot
 ]

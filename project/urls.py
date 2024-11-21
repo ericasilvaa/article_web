@@ -11,6 +11,7 @@ from rest_framework_simplejwt.views import (
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.contrib import admin
 
 # Configuração para a documentação Swagger com drf-yasg
 schema_view = get_schema_view(
@@ -46,12 +47,11 @@ urlpatterns = [
     # Documentação da API Swagger
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
-
-
-
     # Rotas  de Autenticação
     #path('login/', views.user_login, name='login'),  # Atualizado para usar a view de login personalizada
     path('accounts/', include('django.contrib.auth.urls')),
+    path('profile/', views.profile, name='profile'),
+    path('register/', views.register, name='register'),
       # accounts/ login/ [name='login']
       # accounts/ logout/ [name='logout']
       # accounts/ password_change/ [name='password_change']
@@ -60,7 +60,12 @@ urlpatterns = [
       # accounts/ password_reset/done/ [name='password_reset_done']
       # accounts/ reset/<uidb64>/<token>/ [name='password_reset_confirm']
       # accounts/ reset/done/ [name='password_reset_complete']
-    path('profile/', views.profile, name='profile'),
-    path('register/', views.register, name='register'),
+
+    # Rotas do app_project (incluindo chatbot)
+    path('app_project/', include('app_project.urls')), 
+    path('admin/', admin.site.urls),
+    path('chatbot/', include('chatbot.urls')),
+
+   
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # Configurações para servir arquivos de mídia

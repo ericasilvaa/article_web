@@ -13,6 +13,7 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 
 
+
 # Função de login do usuário
 def user_login(request):
     if request.method == 'POST':
@@ -212,3 +213,6 @@ def create_audit_log(user, action, article=None, details=None):
         description=details if details else "Ação registrada no sistema.",
         timestamp=timezone.now()
     )
+
+
+#
